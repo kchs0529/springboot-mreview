@@ -8,14 +8,15 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@ToString
+@ToString(exclude = {"movie","member"})
 public class Review extends BaseEntity{
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reviewnum;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private  Movie movie;
+    private Movie movie;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
@@ -23,5 +24,4 @@ public class Review extends BaseEntity{
     private int grade;
 
     private String text;
-
 }

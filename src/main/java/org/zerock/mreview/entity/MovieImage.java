@@ -8,8 +8,9 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@ToString
+@ToString(exclude = "movie")
 public class MovieImage {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long inum;
@@ -20,6 +21,6 @@ public class MovieImage {
 
     private String path;
 
-    @ManyToOne(fetch = FetchType.LAZY)//무조건 lazy로
+    @ManyToOne(fetch = FetchType.LAZY) //무조건 lazy로
     private Movie movie;
 }

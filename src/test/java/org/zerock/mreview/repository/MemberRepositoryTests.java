@@ -1,10 +1,10 @@
 package org.zerock.mreview.repository;
 
-import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Commit;
+import org.springframework.transaction.annotation.Transactional;
 import org.zerock.mreview.entity.Member;
 
 import java.util.stream.IntStream;
@@ -22,7 +22,7 @@ public class MemberRepositoryTests {
     public void insertMembers(){
         IntStream.rangeClosed(1,100).forEach(i->{
             Member member = Member.builder()
-                    .email("r"+i+"@zerock.org")
+                    .email("r" + i + "@zerock.org")
                     .pw("1111")
                     .nickname("reviewer" + i)
                     .build();
@@ -35,11 +35,12 @@ public class MemberRepositoryTests {
     @Transactional
     @Test
     public void testDeleteMember(){
-        Long mid = 1L;
+        Long mid = 4L;
 
         Member member = Member.builder().mid(mid).build();
 
-        reviewRepository.deleteByMember(member); // 쿼리메소드
-        memberRepository.deleteById(mid); //jpa 기본 CRUD
+        reviewRepository.deleteByMember(member);    //쿼리형 메소드
+        memberRepository.deleteById(mid);           //jpa기본 삭제 기능
+
     }
 }
