@@ -10,12 +10,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.zerock.mreview.dto.UploadResultDTO;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.file.Files;
@@ -61,7 +63,7 @@ public class UploadController {
             try{
                 uploadFile.transferTo(savePath);
 
-                String thumbnailSaveName = uploadPath + File.separator + folderPath + File.separator+"s_"+ uuid + "_" + fileName;
+                String thumbnailSaveName = uploadPath + File.separator + folderPath + File.separator + "s_" + uuid + "_" + fileName;
 
                 File thumbnailFile = new File(thumbnailSaveName);
 
@@ -92,53 +94,50 @@ public class UploadController {
     }
 
     @GetMapping("/display")
-    public ResponseEntity<byte[]> getFile(String fileName){
+    public ResponseEntity<byte[]> getFile(String fileName) {  //2024%2F01%2F16%2F0b5ed545-4057-4d6b-a6d5-a96c878ac0bb_choo1.png
 
         ResponseEntity<byte[]> result = null;
 
         try {
-            String srcFileName = URLDecoder.decode(fileName,"UTF-8");//브라우저에서 자동으로 인코딩하기때문에 디코딩해줘야한다.
-            log.info("filename:"+srcFileName);
+            String srcFileName =  URLDecoder.decode(fileName,"UTF-8");
 
-            File file = new File(uploadPath+File.separator+srcFileName);
-            log.info("file:" + file);
+            log.info("fileName: " + srcFileName);
+
+            File file = new File(uploadPath +File.separator+ srcFileName);
+
+            log.info("file: " + file);
 
             HttpHeaders header = new HttpHeaders();
 
-            header.add("Content-Type", Files.probeContentType(file.toPath()));//File 클래스의 경로 정보
-
-            result = new ResponseEntity<>(FileCopyUtils.copyToByteArray(file),header,HttpStatus.OK);
-
-        }catch (Exception e){
-            e.printStackTrace();
+            //MIME타입 처리
+            header.add("Content-Type", Files.probeContentType(file.toPath()));
+            //파일 데이터 처리
+            result = new ResponseEntity<>(FileCopyUtils.copyToByteArray(file), header, HttpStatus.OK);
+        } catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
         return result;
     }
 
     @PostMapping("/removeFile")
     public ResponseEntity<Boolean> removeFile(String fileName){
-        String srcFilename = null;
 
+        String srcFileName = null;
         try {
-            String srcFileName = URLDecoder.decode(fileName,"UTF-8");//브라우저에서 자동으로 인코딩하기때문에 디코딩해줘야한다.
-
-            log.info("fileName:" + srcFileName);
-
-            File file = new File(uploadPath + File.separator+srcFileName);
+            srcFileName = URLDecoder.decode(fileName,"UTF-8");
+            File file = new File(uploadPath +File.separator+ srcFileName);
             boolean result = file.delete();
 
-            File thumbnail = new File(file.getParent(),"s_"+file.getName());
+            File thumbnail = new File(file.getParent(), "s_" + file.getName());
+
             result = thumbnail.delete();
 
-            return new ResponseEntity<>(result,HttpStatus.OK);
+            return new ResponseEntity<>(result, HttpStatus.OK);
 
-        }catch (Exception e){
+        } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-            log.error(e.getMessage());
-            return new ResponseEntity<>(false,HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(false, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }

@@ -48,45 +48,45 @@
                     console.log(textStatus);
                 }
             });
-        }); //click end
+        });  //click end
 
         function showUploadedImages(arr){
+
             console.log(arr);
 
             var divArea = $(".uploadResult");
 
-            var str="";
+            var str = "";
 
-            for(var i=0;i<arr.length;i++){
-                str+="<div>";
-                str+="<img src='/display?fileName="+ arr[i].thumbnailURL+"'>";
-                str+="<button class='removeBtn' data-name='"+ arr[i].imageURL +"'>삭제하기</button>";
-                str+="</div>";
+            for(var i = 0; i < arr.length; i++){
+                str += "<div>";
+                str += "<img src='/display?fileName=" + arr[i].thumbnailURL + "'>";
+                str += "<button class='removeBtn' data-name='" + arr[i].imageURL + "'>REMOVE</button>";
+                str += "</div>";
             }
             divArea.append(str);
-        }
+        }  // end showUploadedImages()
 
         //$(".removeBtn").click(function() 동적으로 생성된 요소에 대해서는 작동하지 않는다.
-        $(".uploadResult").on("click",".removeBtn",function(){
+        $(".uploadResult").on("click", ".removeBtn", function(e){
+
             var target = $(this);
             var fileName = target.data("name");
-            var targetDiv = $(this).closest("div");//가장 가까운 첫번째 부모의 div
+            var targetDiv = $(this).closest("div");
 
             console.log(fileName);
 
-            $.post(
-                '/removeFile',
-                {fileName:fileName},
-                function(result){
-                    console.log(result);
-                    if(result === true){
-                       targetDiv.remove();
-                    }
-                });
+            $.post('/removeFile', {fileName: fileName}, function(result){
+                console.log(result);
+                if(result === true){
+                    targetDiv.remove();
+                }
+            })
 
         });
 
     </script>
+
 
 
 
