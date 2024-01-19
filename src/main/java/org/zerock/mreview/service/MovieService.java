@@ -1,6 +1,5 @@
 package org.zerock.mreview.service;
 
-import org.springframework.data.domain.PageRequest;
 import org.zerock.mreview.dto.MovieDTO;
 import org.zerock.mreview.dto.MovieImageDTO;
 import org.zerock.mreview.dto.PageRequestDTO;
@@ -56,8 +55,8 @@ public interface MovieService {
     }
 
 
-    //Entity -> DTO
-    default MovieDTO entitiesToDTO(Movie movie,List<MovieImage> movieImages,Double avg,Long reviewCnt){
+    // Entity -> DTO
+    default MovieDTO entitiesToDTO(Movie movie, List<MovieImage> movieImages,Double avg,Long reviewCnt){
         MovieDTO movieDTO = MovieDTO.builder()
                 .mno(movie.getMno())
                 .title(movie.getTitle())
@@ -65,14 +64,13 @@ public interface MovieService {
                 .modDate(movie.getModDate())
                 .build();
 
-        List<MovieImageDTO> movieImageDTOList = movieImages.stream().map(movieImage -> { //Stream<MovieImageDTO<
+        List<MovieImageDTO> movieImageDTOList = movieImages.stream().map(movieImage -> {   //Stream<MovieImageDTO>
            return MovieImageDTO.builder()
                    .imgName(movieImage.getImgName())
                    .path(movieImage.getPath())
                    .uuid(movieImage.getUuid())
                    .build();
-        }).collect(Collectors.toList());//Stream<MovieImageDTOD> ->List<MovieImageDTO>
-
+        }).collect(Collectors.toList()); //Stream<MovieImageDTO> -> List<MovieImageDTO>
 
         movieDTO.setImageDTOList(movieImageDTOList);
         movieDTO.setAvg(avg);
@@ -82,3 +80,4 @@ public interface MovieService {
     }
 
 }
+

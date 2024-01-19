@@ -38,19 +38,24 @@ public class MovieController {
 
     @GetMapping("/list")
     public void list(PageRequestDTO pageRequestDTO, Model model){
-        log.info("list...");
+        log.info("list.......");
 
         model.addAttribute("result",movieService.getList(pageRequestDTO));
+
     }
 
+    //상세보기 페이지 기능
     @GetMapping("/read")
-    public void read(Long mno,PageRequestDTO pageRequestDTO,Model model){
-        //글의 글번호 로그 출력
-        log.info("mno ..."+mno);
+    public void read(long mno,PageRequestDTO requestDTO,Model model){
+        //글번호 로그 출력
+        log.info("mno: " + mno);
         //페이지 번호 로그 출력
-        log.info("page..."+pageRequestDTO.getPage());
+        log.info("page: " + requestDTO.getPage());
+
         MovieDTO movieDTO = movieService.getMovie(mno);
 
         model.addAttribute("dto",movieDTO);
+
     }
+
 }
