@@ -53,41 +53,48 @@ public class MovieServiceImpl implements MovieService {
 
         Page<Object[]> result = movieRepository.getListPage(pageable);
 
-        log.info("==================================");
+        log.info("==============================================");
 
-        result.getContent().forEach(arr->{
+        result.getContent().forEach(arr -> {
             log.info(Arrays.toString(arr));
         });
 
-        Function<Object[],MovieDTO> fn = (arr -> entitiesToDTO(
-                (Movie)arr[0],
+        log.info("==============================================");
+
+//        List<Object[]> movie =  result.getContent();
+//        Object[] m = movie.get(0);
+//        System.out.println((Movie)m[0]);
+//        System.out.println((List<MovieImage>)(Arrays.asList((MovieImage)m[1])));
+//        System.out.println( (Double) m[2]);
+//        System.out.println( (Long)m[3]);
+
+        Function<Object[], MovieDTO> fn = (arr -> entitiesToDTO(
+                (Movie)arr[0] ,
                 (List<MovieImage>)(Arrays.asList((MovieImage)arr[1])),
                 (Double) arr[2],
-                (Long) arr[3]
-        ));
+                (Long)arr[3])
+        );
 
         return new PageResultDTO<>(result,fn);
     }
 
     @Override
     public MovieDTO getMovie(Long mno) {
-        List<Object[]> result=movieRepository.getMovieWithAll(mno);
+
+        List<Object[]> result = movieRepository.getMovieWithAll(mno);
 
         Movie movie = (Movie) result.get(0)[0];
 
         List<MovieImage> movieImageList = new ArrayList<>();
-        result.forEach(arr->{
-            MovieImage movieImage = (MovieImage)arr[1];
+
+        result.forEach(arr -> {
+            MovieImage  movieImage = (MovieImage)arr[1];
             movieImageList.add(movieImage);
         });
 
         Double avg = (Double) result.get(0)[2];
-        Long reviewCnt = (Long)result.get(0)[3];
+        Long reviewCnt = (Long) result.get(0)[3];
 
-
-
-        return entitiesToDTO(movie,movieImageList,avg,reviewCnt);
+        return entitiesToDTO(movie, movieImageList, avg, reviewCnt);
     }
-
-
 }
