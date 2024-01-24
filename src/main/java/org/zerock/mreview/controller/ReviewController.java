@@ -32,11 +32,34 @@ public class ReviewController {
     @PostMapping("/{mno}")
     public ResponseEntity<Long> addReview(@RequestBody ReviewDTO movieReviewDTO){
 
-        log.info(movieReviewDTO);
+        log.info("--------------add MovieReview---------------");
+        log.info("reviewDTO: " + movieReviewDTO);
 
-        Long reviewnum = reviewService.register(movieReviewDTO);
+        Long revienum = reviewService.register(movieReviewDTO);
 
-        return new ResponseEntity<>(reviewnum, HttpStatus.OK);
+        return new ResponseEntity<>(revienum,HttpStatus.OK);
+
+    }
+
+    @PutMapping("/{mno}/{reviewnum}")
+    public ResponseEntity<Long> modifyReview(@PathVariable Long reviewnum ,
+                                             @RequestBody ReviewDTO moviewReviewDTO){
+        log.info("----modify Review-----" + reviewnum);
+        log.info("reveiwDTO : " + moviewReviewDTO );
+
+        reviewService.modify(moviewReviewDTO);
+
+        return new ResponseEntity<>(reviewnum,HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{mno}/{reviewnum}")
+    public ResponseEntity<Long> removeReview(@PathVariable Long reviewnum){
+
+        log.info("----delete Review-----" + reviewnum);
+
+        reviewService.remove(reviewnum);
+
+        return new ResponseEntity<>(reviewnum,HttpStatus.OK);
     }
 
 }

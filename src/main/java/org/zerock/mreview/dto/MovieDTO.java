@@ -29,8 +29,8 @@ public class MovieDTO {
     //리뷰 개수
     private int reviewCnt;
 
-    private LocalDateTime regDate;
+    private LocalDateTime regData;
 
-    private LocalDateTime modDate;
+    private LocalDateTime modData;
 
 }
