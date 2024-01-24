@@ -58,6 +58,18 @@ public class MovieRepositoryTests {
         });
     }
 
+    @Test
+    public void testSearchPage(){
+        //movieRepository.search1();
+
+        Pageable pageable =
+                PageRequest.of(0,10,
+                        Sort.by("bno").descending()
+                                .and(Sort.by("title").ascending()));
+
+        Page<Object[]> result = movieRepository.searchPage("t", "1", pageable);
+    }
+
 
     @Test
     public void testListPage(){
@@ -80,6 +92,8 @@ public class MovieRepositoryTests {
             System.out.println(Arrays.toString(objects));
         }
     }
+
+
 
     @Test
     public void testGetMovieWithAll(){

@@ -51,7 +51,22 @@ public class MovieServiceImpl implements MovieService {
 
         Pageable pageable = requestDTO.getPageable(Sort.by("mno").descending());
 
-        Page<Object[]> result = movieRepository.getListPage(pageable);
+//        Page<Object[]> result = movieRepository.getListPage(pageable);
+//
+//        log.info("==============================================");
+//
+//        result.getContent().forEach(arr -> {
+//            log.info(Arrays.toString(arr));
+//        });
+//
+//        log.info("==============================================");
+
+
+        Page<Object[]> result = movieRepository.searchPage(
+                requestDTO.getType(),
+                requestDTO.getKeyword(),
+                requestDTO.getPageable(Sort.by("mno").descending())
+        );
 
         log.info("==============================================");
 
@@ -68,12 +83,17 @@ public class MovieServiceImpl implements MovieService {
 //        System.out.println( (Double) m[2]);
 //        System.out.println( (Long)m[3]);
 
+
+
+
         Function<Object[], MovieDTO> fn = (arr -> entitiesToDTO(
                 (Movie)arr[0] ,
                 (List<MovieImage>)(Arrays.asList((MovieImage)arr[1])),
                 (Double) arr[2],
                 (Long)arr[3])
         );
+
+
 
         return new PageResultDTO<>(result,fn);
     }

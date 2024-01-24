@@ -10,7 +10,11 @@ import java.util.List;
 public interface ReviewService {
     List<ReviewDTO> getListOfMovie(Long mno);
 
-    Long register(ReviewDTO reviewDTO);
+    Long register(ReviewDTO movieReviewDTO);
+
+    void modify(ReviewDTO movieReviewDTO);
+
+    void remove(Long reviewnum);
 
     default ReviewDTO entityToDto(Review movieReview){
 
@@ -31,18 +35,14 @@ public interface ReviewService {
 
     default Review dtoToEntity(ReviewDTO movieReviewDTO){
 
-        Movie movie = Movie.builder().mno(movieReviewDTO.getMno()).build();
-        Member member = Member.builder().mid(movieReviewDTO.getMid()).build();
-
-        Review review = Review.builder()
+        Review movieReview = Review.builder()
                 .reviewnum(movieReviewDTO.getReviewnum())
-                .movie(movie)
-                .member(member)
+                .movie(Movie.builder().mno(movieReviewDTO.getMno()).build())
+                .member(Member.builder().mid(movieReviewDTO.getMid()).build())
                 .grade(movieReviewDTO.getGrade())
                 .text(movieReviewDTO.getText())
                 .build();
 
-        return review;
+        return movieReview;
     }
-
 }

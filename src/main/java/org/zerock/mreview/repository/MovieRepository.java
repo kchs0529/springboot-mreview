@@ -5,10 +5,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.zerock.mreview.entity.Movie;
+import org.zerock.mreview.repository.search.SearchBoardRepository;
 
 import java.util.List;
 
-public interface MovieRepository extends JpaRepository<Movie,Long> {
+public interface MovieRepository extends JpaRepository<Movie,Long>, SearchBoardRepository {
 
 //    @Query("select m,avg(coalesce(r.grade,0)),count(distinct r) " +
 //            "from Movie m left join Review r " +

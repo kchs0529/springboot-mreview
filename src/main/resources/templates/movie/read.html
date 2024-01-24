@@ -60,16 +60,18 @@
             </ul>
         </div>
 
-        <button type="button" class="btn btn-primary reviewCount">
+        <button type="button" class="btn btn-primary">
             Review Count <span class="badge badge-light">[[${dto.reviewCnt}]]</span>
         </button>
 
         <button type="button" class="btn btn-info addReviewBtn">
             Review Register
         </button>
+
         <div class="list-group reviewList">
 
         </div>
+
 
 
         <!-- The Modal -->
@@ -115,6 +117,31 @@
             </div>
         </div>
 
+        <div class="imageModal modal" tabindex="-2" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">Movie image</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+
+                    <!-- Modal body -->
+                    <div class="modal-body">
+
+                    </div>
+
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
         <script th:src="@{/starrr.js}"></script>
         <link th:href="@{/css/starrr.css}" rel="stylesheet">
         <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css">
@@ -122,16 +149,16 @@
         <script>
             $(document).ready(function(e) {
 
-                var mno = [[${dto.mno}]]
-
                 var grade = 0;
 
+                var mno = [[${dto.mno}]]
+
                 $('.starrr').starrr({
-                    rating:grade,
-                    change:function(e,value){
-                        if(value){
+                    rating: grade,
+                    change: function(e, value){
+                        if (value) {
                             console.log(value);
-                            grade=value;
+                            grade = value;
                         }
                     }
                 });
@@ -141,78 +168,147 @@
                 var inputText = $('input[name="text"]');
 
                 $(".addReviewBtn").click(function(){
+
                     inputMid.val("");
                     inputText.val("");
 
-                    $(".removeBtn, .modifyBtn").hide();
+                    $(".fa-star").attr('class','fa-star-o fa');
+
+                    $(".removeBtn , .modifyBtn").hide();
                     $(".reviewSaveBtn").show();
 
                     reviewModal.modal('show');
+
                 });
 
-                $(".reviewSaveBtn").click(function () {
+                $(".reviewSaveBtn").click(function(){
 
-                    var review = {
-                        mno:mno,
-                        text:$('input[name="text"]').val(),
-                        mid:$('input[name="mid"]').val(),
-                        grade:grade
-                    }
+                    var data = { mno:mno, grade:grade, text:inputText.val(), mid: inputMid.val() };
 
+                     $.ajax({
+                        url:'/reviews/'+mno,
+                        type:"POST",
+                        data:JSON.stringify(data),
+                        contentType:"application/json; charset=utf-8",
+                        dataType:"text",
+                        success: function(result){
 
-                    $.ajax({
-                        url: '/reviews/'+mno,
-                        method: 'post',
-                        data:  JSON.stringify(review),
-                        contentType: 'application/json; charset=utf-8',
-                        dataType: 'json',
-                        success: function(data){
-                            console.log(data);
+                            console.log("result: " + result);
 
-                            alert("리뷰 등록이 완료되었습니다")
-                            $(".modal").modal('hide');
-                            getMovieReviews();
+                            self.location.reload();
+
                         }
-                    });
+                    })
+                    reviewModal.modal('hide');
+
                 });
 
-                function getMovieReviews() {
+
+
+
+                function getMovieReviews(){
 
                     function formatTime(str){
-
-                        var date = new Date(str);
+                        var date = new Date(str);  // 등록일자
 
                         return date.getFullYear() + '/' +
                             (date.getMonth() + 1) + '/' +
                             date.getDate() + ' ' +
                             date.getHours() + ':' +
                             date.getMinutes();
-                    }<!--내부 함수-->
+                    }
 
-                    $.getJSON('/reviews/'+mno+'/all', function(arr){
+                    $.getJSON("/reviews/" + mno + "/all",function(arr){
 
-                        var str ="";
+                        var str="";
 
-                        $.each(arr, function(idx, review){
-                            console.log(review);
-                            str += '    <div class="card-body" data-reviewnum='+review.reviewnum+'data-mid='+review.mid +'>';
-                            str += '    <h5 class="card-title">'+review.text+' <span>'+review.grade +'</span></h5>';
-                            str += '    <h6 class="card-subtitle mb-2 text-muted">'+review.nickname+'</h6>';
-                            str += '    <p class="card-text">'+ formatTime(review.regDate) +'</p>';
-                            str += '    </div>';
-                        })
+                        $.each(arr,function(idx,review){
+
+                            str += ' <div class="card-body" data-reviewnum=' + review.reviewnum + ' data-mid='+review.mid + '>';
+                            str += ' <h5 class="card-title">' + review.text + ' <span>' + review.grade + '</span></h5>';
+                            str += ' <h6 class="card-subtitle mb-2 text-muted">' + review.nickname + '</h6>';
+                            str += ' <p class="card-text">' + formatTime(review.regDate) + '</p>';
+                            str += ' </div>';
+
+                        });
 
                         $(".reviewList").html(str);
-
                     });
                 }
 
-                $(".reviewCount").click(function(){
-                    getMovieReviews();
+                getMovieReviews();
+
+
+                var reviewnum;
+
+                $(".reviewList").on("click",".card-body",function(){
+                    $(".reviewSaveBtn").hide();
+                    $(".removeBtn , .modifyBtn").show();
+
+                    var targetReview = $(this)
+
+                    reviewnum = targetReview.data("reviewnum");
+                    console.log("reviewnum: " + reviewnum);
+                    inputMid.val(targetReview.data("mid"));
+                    inputText.val(targetReview.find('.card-title').clone().children().remove().end().text());
+
+                    var grade = targetReview.find('.card-title span').html();
+                    $(".starrr a:nth-child("+grade+")").trigger('click');
+
+                    $('.reviewModal').modal('show');
+
                 });
 
-            });
+                $(".modifyBtn").on("click",function(){
 
+                    var data = {reviewnum: reviewnum, mno:mno, grade:grade, text:inputText.val(), mid: inputMid.val() };
+
+
+                    $.ajax({
+                        url:'/reviews/'+mno +"/"+ reviewnum ,
+                        type:"PUT",
+                        data:JSON.stringify(data),
+                        contentType:"application/json; charset=utf-8",
+                        dataType:"text",
+                        success: function(result){
+
+                            console.log("result: " + result);
+
+                            self.location.reload();
+
+                        }
+                    }); //ajax end
+                    reviewModal.modal('hide');
+                });  //click event end
+
+                $(".removeBtn").on("click",function(){
+
+                    var data = {reviewnum: reviewnum};
+
+                    $.ajax({
+                        url:'/reviews/'+ mno +"/" + reviewnum ,
+                        type:"DELETE",
+                        contentType:"application/json; charset=utf-8",
+                        dataType:"text",
+                        success:function(result){
+
+                            console.log("result: " + result);
+
+                            self.location.reload();
+                        }
+                    });
+                    reviewModal.modal('hide');
+                });
+
+                $(".uploadResult li").click(function(){
+                    var file = $(this).data('file');
+
+                    $('.imageModal .modal-body').html("<img style='width:100%' src='/display?fileName="+file+"&size=1' >")
+                    $(".imageModal").modal("show");
+                })
+
+
+            });
         </script>
 
     </th:block>

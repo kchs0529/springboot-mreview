@@ -60,8 +60,8 @@ public interface MovieService {
         MovieDTO movieDTO = MovieDTO.builder()
                 .mno(movie.getMno())
                 .title(movie.getTitle())
-                .regDate(movie.getRegDate())
-                .modDate(movie.getModDate())
+                .regData(movie.getRegDate())
+                .modData(movie.getModDate())
                 .build();
 
         List<MovieImageDTO> movieImageDTOList = movieImages.stream().map(movieImage -> {   //Stream<MovieImageDTO>
